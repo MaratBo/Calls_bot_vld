@@ -82,4 +82,4 @@ def User():
 if __name__ == '__main__':
     while True:
         User()
-        sleep(5)
+        sleep(673200)
