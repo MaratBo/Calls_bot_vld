@@ -1,1 +1,11 @@
-.env
+.git/*
+env/
+venv/
+.venv
+.venv/
+
+__pycache__/
+*.py[cod]
+
+.idea
+*.env
