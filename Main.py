@@ -49,7 +49,7 @@ def Script(session_id):
             send_data.append(len(r['calls']))
         except:
             send_data.append(0)
-    if send_data[0] == 0:
+    if send_data[0] != 0:
         message(send_data)
         send_data.clear()
 
@@ -79,7 +79,7 @@ def User():
         Auth(access[key])
         names.clear()
 
-if __name__ == '__main__':
-    while True:
-        User()
-        sleep(673200)
+
+while True:
+    User()
+    sleep(673200)
