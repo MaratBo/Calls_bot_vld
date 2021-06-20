@@ -14,7 +14,7 @@ def Auth(data):
                'Content-Type': 'application/json',
                'x-authorization': VERTIS_TOKEN}
     r = requests.post(URL, data=data, headers=headers).json()
-    message(r)
+    print(r)
     session_id = r['session']['id']
     message(session_id)
 
@@ -56,12 +56,12 @@ def Auth(data):
 def message(send_data):
     time = datetime.date.today().strftime('%d.%m')
     list_cabinet = ['АвтоТракт PROБЕГ', 'АвтоТракт NISSAN']
-    text = f'{list_cabinet[names[0]]}\n' \
-           f'Звонки за {time}\n' \
-           f'Всего звонков - {send_data[0]}\n' \
-           f'Пропущено - {send_data[1]}'
+    # text = f'{list_cabinet[names[0]]}\n' \
+    #        f'Звонки за {time}\n' \
+    #        f'Всего звонков - {send_data[0]}\n' \
+    #        f'Пропущено - {send_data[1]}'
 
-    token = os.getenv("MARUSIA_TOKEN")  # токен Маруси
+    token = "1058094375:AAGMLM3QLXHaHqsZFib0GLczOXpr5HI4-Yk"  # токен Маруси
     chat_id = '@calls_from_office'  # адрес канала
 
     URL = (
@@ -74,9 +74,10 @@ def message(send_data):
 
 
 def User():
-    access = [os.getenv("ACCESS_1"), os.getenv("ACCESS_2")]
+    access = ["{'login': 'ap1it@yandex.ru', 'password': '123Testapi'}"]
     for key in range(len(access)):
         names.append(key)
+        print(access[key])
         Auth(access[key])
         names.clear()
 
