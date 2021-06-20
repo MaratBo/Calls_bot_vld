@@ -89,5 +89,4 @@ def User():
 
 while True:
     User()
-    #sleep(673200)
-    sleep(10)
+    sleep(673200)
