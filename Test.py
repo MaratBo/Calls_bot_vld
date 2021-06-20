@@ -1,13 +1,11 @@
-import datetime
-from time import sleep
-
 from dotenv import load_dotenv
 import os
-
+import datetime
 from pip._vendor import requests
 
 load_dotenv()
 names = []
+
 
 def Auth(data):
     URL = "https://apiauto.ru/1.0/auth/login"
@@ -17,42 +15,42 @@ def Auth(data):
     r = requests.post(URL, data=data, headers=headers).json()
     print(r)
     session_id = r['session']['id']
-    Script(session_id)
+    message(session_id)
 
 
-def Script(session_id):
-    start_time = f'{datetime.date.today()}T00:00:00.000Z'
-
-    headers = {
-        'X-Session-Id': session_id,
-        'X-Authorization': os.getenv("VERTIS_TOKEN"),
-        'Accept': 'application/json',
-    }
-
-    data = {
-        "pagination": {
-            "page": 1,
-            "page_size": 50},
-        "filter": {
-            "period":
-                {
-                    "from": start_time
-                }
-            },
-    }
-    add_data = [{"results": "ALL_RESULT_GROUP"}, {'results': 'MISSED_GROUP'}]
-    send_data = []
-    for i in add_data:
-        data['filter'].update(i)
-        URL = 'https://apiauto.ru/1.0/calltracking'
-        r = requests.post(URL, json=data, headers=headers).json()
-        try:
-            send_data.append(len(r['calls']))
-        except:
-            send_data.append(0)
-    if send_data[0] != 0:
-        message(send_data)
-        send_data.clear()
+# def Script(session_id):
+#     start_time = f'{datetime.date.today()}T00:00:00.000Z'
+#
+#     headers = {
+#         'X-Session-Id': session_id,
+#         'X-Authorization': os.getenv("VERTIS_TOKEN"),
+#         'Accept': 'application/json',
+#     }
+#
+#     data = {
+#         "pagination": {
+#             "page": 1,
+#             "page_size": 50},
+#         "filter": {
+#             "period":
+#                 {
+#                     "from": start_time
+#                 }
+#             },
+#     }
+#     add_data = [{"results": "ALL_RESULT_GROUP"}, {'results': 'MISSED_GROUP'}]
+#     send_data = []
+#     for i in add_data:
+#         data['filter'].update(i)
+#         URL = 'https://apiauto.ru/1.0/calltracking'
+#         r = requests.post(URL, json=data, headers=headers).json()
+#         try:
+#             send_data.append(len(r['calls']))
+#         except:
+#             send_data.append(0)
+#     if send_data[0] != 0:
+#         message(send_data)
+#         send_data.clear()
 
 def message(send_data):
     time = datetime.date.today().strftime('%d.%m')
@@ -68,9 +66,10 @@ def message(send_data):
     URL = (
         'https://api.telegram.org/bot{token}/sendMessage'.format(token=token))
     data = {'chat_id': chat_id,
-            'text': text
+            'text': send_data
             }
     requests.post(URL, data=data)
+
 
 
 def User():
@@ -81,6 +80,5 @@ def User():
         names.clear()
 
 
-while True:
-    User()
-    #sleep(673200)
+
+User()
