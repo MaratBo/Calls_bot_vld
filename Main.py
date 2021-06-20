@@ -6,14 +6,20 @@ import os
 
 from pip._vendor import requests
 
+
 load_dotenv()
 names = []
+cabinet_1 = os.getenv("ACCESS_1")
+cabinet_2 = os.getenv("ACCESS_2")
+TOKEN = os.getenv("VERTIS_TOKEN")
+TLG_TOKEN = os.getenv("MARUSIA_TOKEN")
+
 
 def Auth(data):
     URL = "https://apiauto.ru/1.0/auth/login"
     headers = {'Accept': 'application/json',
                'Content-Type': 'application/json',
-               'x-authorization': os.getenv("VERTIS_TOKEN")}
+               'x-authorization': TOKEN}
     r = requests.post(URL, data=data, headers=headers).json()
     print(r)
     session_id = r['session']['id']
@@ -25,7 +31,7 @@ def Script(session_id):
 
     headers = {
         'X-Session-Id': session_id,
-        'X-Authorization': os.getenv("VERTIS_TOKEN"),
+        'X-Authorization': TOKEN,
         'Accept': 'application/json',
     }
 
@@ -62,7 +68,7 @@ def message(send_data):
            f'Всего звонков - {send_data[0]}\n' \
            f'Пропущено - {send_data[1]}'
 
-    token = os.getenv("MARUSIA_TOKEN")  # токен Маруси
+    token = TLG_TOKEN  # токен Маруси
     chat_id = '@calls_from_office'  # адрес канала
 
     URL = (
@@ -75,9 +81,7 @@ def message(send_data):
 
 def User():
     #access = [os.getenv("ACCESS_1"), os.getenv("ACCESS_2")]
-    access = ["{'login': 'ap1it@yandex.ru', 'password': '123Testapi'}",
-              "{'login': 'ap1it2@yandex.ru', 'password': '123Testapi2'}"
-              ]
+    access = [cabinet_1, cabinet_2]
     for key in range(len(access)):
         names.append(key)
         Auth(access[key])
