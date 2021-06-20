@@ -15,6 +15,7 @@ def Auth(data):
                'Content-Type': 'application/json',
                'x-authorization': os.getenv("VERTIS_TOKEN")}
     r = requests.post(URL, data=data, headers=headers).json()
+    print(r)
     session_id = r['session']['id']
     Script(session_id)
 
@@ -76,6 +77,7 @@ def User():
     access = [os.getenv("ACCESS_1"), os.getenv("ACCESS_2")]
     for key in range(len(access)):
         names.append(key)
+        print(access[key])
         Auth(access[key])
         names.clear()
 
