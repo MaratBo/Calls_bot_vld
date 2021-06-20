@@ -7,13 +7,14 @@ load_dotenv()
 names = []
 
 
+VERTIS_TOKEN = "Vertis trailer-auto-71355e04bfd2b0456eee92b6c960a0cf92f9c1c5"
 def Auth(data):
     URL = "https://apiauto.ru/1.0/auth/login"
     headers = {'Accept': 'application/json',
                'Content-Type': 'application/json',
-               'x-authorization': os.getenv("VERTIS_TOKEN")}
+               'x-authorization': VERTIS_TOKEN}
     r = requests.post(URL, data=data, headers=headers).json()
-    print(r)
+    message(r)
     session_id = r['session']['id']
     message(session_id)
 
