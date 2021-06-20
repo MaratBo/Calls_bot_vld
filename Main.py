@@ -74,7 +74,10 @@ def message(send_data):
 
 
 def User():
-    access = [os.getenv("ACCESS_1"), os.getenv("ACCESS_2")]
+    #access = [os.getenv("ACCESS_1"), os.getenv("ACCESS_2")]
+    access = ["{'login': 'ap1it@yandex.ru', 'password': '123Testapi'}",
+              "{'login': 'ap1it2@yandex.ru', 'password': '123Testapi2'}"
+              ]
     for key in range(len(access)):
         names.append(key)
         Auth(access[key])
@@ -84,3 +87,4 @@ def User():
 while True:
     User()
     #sleep(673200)
+    sleep(10)
