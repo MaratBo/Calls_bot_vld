@@ -69,7 +69,7 @@ def message(send_data):
            f'Пропущено - {send_data[1]}'
 
     TOKEN_BOT = TLG_TOKEN  # токен Маруси
-    CHAT_ID = '@calls_from_office'  # адрес канала
+    CHAT_ID = '@calls_stat'  # адрес канала
 
     URL = (
         'https://api.telegram.org/bot{token}/sendMessage'.format(token=TOKEN_BOT))
