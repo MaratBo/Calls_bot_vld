@@ -1,16 +1,20 @@
 import datetime
+from datetime import timedelta
 from time import sleep
 
 from dotenv import load_dotenv
 import os
+import requests
 
-from pip._vendor import requests
 
 
 load_dotenv()
 names = []
 cabinet_1 = os.getenv("ACCESS_1")
 cabinet_2 = os.getenv("ACCESS_2")
+cabinet_3 = os.getenv("ACCESS_3")
+cabinet_4 = os.getenv("ACCESS_4")
+cabinet_5 = os.getenv("ACCESS_5")
 TOKEN = os.getenv("VERTIS_TOKEN")
 TLG_TOKEN = os.getenv("MARUSIA_TOKEN")
 
@@ -21,7 +25,6 @@ def auth(data):
                'Content-Type': 'application/json',
                'x-authorization': TOKEN}
     r = requests.post(URL, data=data, headers=headers).json()
-    print(r)
     session_id = r['session']['id']
     script(session_id)
 
@@ -62,14 +65,14 @@ def script(session_id):
 
 def message(send_data):
     time = datetime.date.today().strftime('%d.%m')
-    LIST_CABINET = ['АвтоТракт PROБЕГ', 'АвтоТракт NISSAN']
+    LIST_CABINET = ['АвтоТракт PROБЕГ', 'АвтоТракт NISSAN', 'Ford', 'some cabinet', 'Lada']
     text = f'{LIST_CABINET[names[0]]}\n' \
            f'Звонки за {time}\n' \
            f'Всего звонков - {send_data[0]}\n' \
            f'Пропущено - {send_data[1]}'
 
     TOKEN_BOT = TLG_TOKEN  # токен Маруси
-    CHAT_ID = '@calls_stat'  # адрес канала
+    CHAT_ID = '@calls_from_office'  # адрес канала
 
     URL = (
         'https://api.telegram.org/bot{token}/sendMessage'.format(token=TOKEN_BOT))
@@ -77,17 +80,33 @@ def message(send_data):
             'text': text
             }
     requests.post(URL, data=data)
+    #print(text)
 
 
 def user():
-    access = [cabinet_1, cabinet_2]
+    access = [cabinet_1, cabinet_2, cabinet_3, cabinet_4, cabinet_5]
     for key in range(len(access)):
         names.append(key)
         auth(access[key])
         names.clear()
 
 
+def dont_sleep():
+    time_now = datetime.datetime.now() + datetime.timedelta(hours=3)
+    return time_now
+
+
+# проблема что хероку засыпает через 30 минут и заново запускает процессы
 if __name__ == '__main__':
     while True:
-        user()
-        sleep(86400)
+        time_now = datetime.datetime.now()
+        h = time_now.hour
+        m = time_now.minute
+        print(f'check time {h}:{m}')
+        if h == 18 and 30 <= m < 50:
+            print(f'start script {h}:{m}')
+            user()
+            sleep(84600)
+        else:
+            # print('ff')
+            sleep(1200)
