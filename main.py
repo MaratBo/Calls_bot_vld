@@ -72,7 +72,7 @@ def message(send_data):
            f'Пропущено - {send_data[1]}'
 
     TOKEN_BOT = TLG_TOKEN  # токен Маруси
-    CHAT_ID = '@calls_from_office'  # адрес канала
+    CHAT_ID = '@calls_stat'  # адрес канала
 
     URL = (
         'https://api.telegram.org/bot{token}/sendMessage'.format(token=TOKEN_BOT))
@@ -80,7 +80,7 @@ def message(send_data):
             'text': text
             }
     requests.post(URL, data=data)
-    #print(text)
+    # print(text)
 
 
 def user():
@@ -99,11 +99,11 @@ def dont_sleep():
 # проблема что хероку засыпает через 30 минут и заново запускает процессы
 if __name__ == '__main__':
     while True:
-        time_now = datetime.datetime.now()
+        time_now = datetime.datetime.now() + timedelta(hours=3) # смещение на американском сервере + 3ч
         h = time_now.hour
         m = time_now.minute
         print(f'check time {h}:{m}')
-        if h == 15 and 30 <= m < 50:
+        if h == 18 and 30 <= m < 50:
             print(f'start script {h}:{m}')
             user()
             sleep(84600)
