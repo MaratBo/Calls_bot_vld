@@ -65,7 +65,7 @@ def script(session_id):
 
 def message(send_data):
     time = datetime.date.today().strftime('%d.%m')
-    LIST_CABINET = ['АвтоТракт PROБЕГ', 'АвтоТракт NISSAN', 'Ford', 'some cabinet', 'Lada']
+    LIST_CABINET = ['АвтоТракт PROБЕГ', 'АвтоТракт NISSAN', 'Peugeot/Ford', 'Chevrolet', 'Lada']
     text = f'{LIST_CABINET[names[0]]}\n' \
            f'Звонки за {time}\n' \
            f'Всего звонков - {send_data[0]}\n' \
@@ -89,11 +89,6 @@ def user():
         names.append(key)
         auth(access[key])
         names.clear()
-
-
-def dont_sleep():
-    time_now = datetime.datetime.now() + datetime.timedelta(hours=3)
-    return time_now
 
 
 # проблема что хероку засыпает через 30 минут и заново запускает процессы
