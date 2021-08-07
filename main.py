@@ -56,12 +56,14 @@ def script(session_id):
         URL = 'https://apiauto.ru/1.0/calltracking'
         r = requests.post(URL, json=data, headers=headers).json()
         try:
-            send_data.append(len(r['calls']))
+            unic_calls = set((map(lambda x: x['source']['raw'], r['calls'])))
+            send_data.append(len(unic_calls))
         except:
             send_data.append(0)
     if send_data[0] != 0:
         message(send_data)
         send_data.clear()
+
 
 def message(send_data):
     time = datetime.date.today().strftime('%d.%m')
