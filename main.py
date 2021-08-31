@@ -5,16 +5,20 @@ from time import sleep
 from dotenv import load_dotenv
 import os
 import requests
+from balance import check_balance
 
 
 
 load_dotenv()
+rest_money = []
 names = []
+calls_text = ''
 cabinet_1 = os.getenv("ACCESS_1")
 cabinet_2 = os.getenv("ACCESS_2")
 cabinet_3 = os.getenv("ACCESS_3")
 cabinet_4 = os.getenv("ACCESS_4")
 cabinet_5 = os.getenv("ACCESS_5")
+cabinet_6 = os.getenv("ACCESS_6")
 TOKEN = os.getenv("VERTIS_TOKEN")
 TLG_TOKEN = os.getenv("MARUSIA_TOKEN")
 
@@ -29,9 +33,9 @@ def auth(data):
     script(session_id)
 
 
-def script(session_id):
+def script(session_id):  # возвращает список принятых и пропущ звонков
     start_time = f'{datetime.date.today()}T00:00:00.000Z'
-
+    global calls_text
     headers = {
         'X-Session-Id': session_id,
         'X-Authorization': TOKEN,
@@ -47,7 +51,7 @@ def script(session_id):
                 {
                     "from": start_time
                 }
-            },
+        },
     }
     ADD_DATA = [{"results": "ALL_RESULT_GROUP"}, {'results': 'MISSED_GROUP'}]
     send_data = []
@@ -61,46 +65,55 @@ def script(session_id):
         except:
             send_data.append(0)
     if send_data[0] != 0:
-        message(send_data)
+        LIST_CABINET = ['PROБЕГ', 'NISSAN', 'Peugeot/Ford', 'Chevrolet', 'Lada', 'МБ']
+        text = f'{LIST_CABINET[names[0]]} - ' \
+               f'{send_data[0]}/{send_data[1]}'
+        calls_text += f'{text}\n'
         send_data.clear()
+    balance_info = check_balance(headers, names)  # возвращает готовый текст по балансу
+    if balance_info is not None:
+        rest_money.append(balance_info)
 
 
-def message(send_data):
-    time = datetime.date.today().strftime('%d.%m')
-    LIST_CABINET = ['АвтоТракт PROБЕГ', 'АвтоТракт NISSAN', 'Peugeot/Ford', 'Chevrolet', 'Lada']
-    text = f'{LIST_CABINET[names[0]]}\n' \
-           f'Звонки за {time}\n' \
-           f'Всего звонков - {send_data[0]}\n' \
-           f'Пропущено - {send_data[1]}'
-
+def message(sms):
     TOKEN_BOT = TLG_TOKEN  # токен Маруси
     CHAT_ID = '@calls_stat'  # адрес канала
 
     URL = (
         'https://api.telegram.org/bot{token}/sendMessage'.format(token=TOKEN_BOT))
     data = {'chat_id': CHAT_ID,
-            'text': text
+            'text': sms
             }
     requests.post(URL, data=data)
-    # print(text)
 
 
 def user():
-    access = [cabinet_1, cabinet_2, cabinet_3, cabinet_4, cabinet_5]
+    time = datetime.date.today().strftime('%d.%m')
+    access = [cabinet_1, cabinet_2, cabinet_3, cabinet_4, cabinet_5, cabinet_6]
     for key in range(len(access)):
-        names.append(key)
+        names.append(key)  # запись ключей по порядку 1-5, потом удаляет.
         auth(access[key])
         names.clear()
+    # отправляем собранный текст по звонкам
+    message(f'Звонки за {time} (всего/пропущ.)\n'
+            f'{calls_text}')
+    # тут запуск бота по балансу
+    value = ''
+    if len(rest_money) > 0:
+        for i in rest_money:
+            if i is not None:
+                value += f'{i}\n'
+        text = f'Балансы кабинетов:\n{value}'
+        message(text)
 
 
-# проблема что хероку засыпает через 30 минут и заново запускает процессы
 if __name__ == '__main__':
     while True:
         time_now = datetime.datetime.now() + timedelta(hours=3) # смещение на американском сервере + 3ч
         h = time_now.hour
         m = time_now.minute
         print(f'check time {h}:{m}')
-        if h == 18 and 30 <= m < 50:
+        if h == 18 and 10 <= m < 50:
             print(f'start script {h}:{m}')
             user()
             sleep(84600)
