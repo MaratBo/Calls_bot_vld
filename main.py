@@ -1,4 +1,5 @@
 import datetime
+import calendar
 from datetime import timedelta
 from time import sleep
 
@@ -109,14 +110,15 @@ def user():
 
 if __name__ == '__main__':
     while True:
+        date = datetime.date.today()
+        day_name = calendar.day_name[date.weekday()]
         time_now = datetime.datetime.now() + timedelta(hours=3) # смещение на американском сервере + 3ч
         h = time_now.hour
         m = time_now.minute
         print(f'check time {h}:{m}')
-        if h == 18 and 10 <= m < 50:
+        if day_name != 'Saturday' and day_name != 'Sunday' and m in range(10, 30) and h == 18:
             print(f'start script {h}:{m}')
             user()
             sleep(84600)
         else:
-            # print('ff')
             sleep(1200)
