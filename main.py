@@ -85,12 +85,12 @@ def message(sms):
     data = {'chat_id': CHAT_ID,
             'text': sms
             }
-    #requests.post(URL, data=data)
-    print(sms)
+    requests.post(URL, data=data)
+    #print(sms)
 
 def user():
     time = datetime.date.today().strftime('%d.%m')
-    access = [cabinet_1, cabinet_2, cabinet_3, cabinet_4, cabinet_5, cabinet_6]
+    access = [cabinet_1, cabinet_2, cabinet_3, cabinet_4, cabinet_5]#, cabinet_6]
     for key in range(len(access)):
         names.append(key)  # запись ключей по порядку 1-5, потом удаляет.
         auth(access[key])
@@ -116,7 +116,7 @@ if __name__ == '__main__':
         h = time_now.hour
         m = time_now.minute
         print(f'check time {h}:{m}')
-        if day_name != 'Saturday' and day_name != 'Sunday' and m in range(10, 30) and h == 19:
+        if day_name != 'Saturday' and day_name != 'Sunday' and m in range(10, 30) and h == 21:
             print(f'start script {h}:{m}')
             user()
             sleep(84600)
