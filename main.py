@@ -78,15 +78,15 @@ def script(session_id):  # возвращает список принятых и
 
 def message(sms):
     TOKEN_BOT = TLG_TOKEN  # токен Маруси
-    CHAT_ID = '@calls_stat'  # адрес канала
-
+    #CHAT_ID = '@calls_stat'  # адрес канала
+    CHAT_ID = '@calls_from_office'
     URL = (
         'https://api.telegram.org/bot{token}/sendMessage'.format(token=TOKEN_BOT))
     data = {'chat_id': CHAT_ID,
             'text': sms
             }
-    requests.post(URL, data=data)
-
+    #requests.post(URL, data=data)
+    print(sms)
 
 def user():
     time = datetime.date.today().strftime('%d.%m')
@@ -116,7 +116,7 @@ if __name__ == '__main__':
         h = time_now.hour
         m = time_now.minute
         print(f'check time {h}:{m}')
-        if day_name != 'Saturday' and day_name != 'Sunday' and m in range(10, 30) and h == 18:
+        if day_name != 'Saturday' and day_name != 'Sunday' and m in range(10, 30) and h == 19:
             print(f'start script {h}:{m}')
             user()
             sleep(84600)
