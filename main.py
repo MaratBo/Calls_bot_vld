@@ -86,8 +86,7 @@ def message(sms):
     data = {'chat_id': CHAT_ID,
             'text': sms
             }
-    #requests.post(URL, data=data)
-    print(sms)
+    requests.post(URL, data=data)
 
 def user():
     time = datetime.date.today().strftime('%d.%m')
