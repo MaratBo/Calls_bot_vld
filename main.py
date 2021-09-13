@@ -114,7 +114,7 @@ if __name__ == '__main__':
             h = time_now.hour
             m = time_now.minute
             print(f'check time {h}:{m}')
-            if m in range(10, 31) and h == 20:
+            if m in range(10, 30) and h == 18:
                 print(f'start script {h}:{m}')
                 user()
                 sleep(84600)
