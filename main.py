@@ -109,13 +109,17 @@ if __name__ == '__main__':
     while True:
         date = datetime.date.today()
         day_name = calendar.day_name[date.weekday()]
-        time_now = datetime.datetime.now() + timedelta(hours=3) # смещение на американском сервере + 3ч
-        h = time_now.hour
-        m = time_now.minute
-        print(f'check time {h}:{m}')
-        if day_name != 'Saturday' and day_name != 'Sunday' and m in range(10, 30) and h == 18:
-            print(f'start script {h}:{m}')
-            user()
-            sleep(84600)
+        if day_name != 'Saturday' and day_name != 'Sunday':
+            time_now = datetime.datetime.now() + timedelta(hours=3) # смещение на американском сервере + 3ч
+            h = time_now.hour
+            m = time_now.minute
+            print(f'check time {h}:{m}')
+            if m in range(10, 31) and h == 20:
+                print(f'start script {h}:{m}')
+                user()
+                sleep(84600)
+            else:
+                sleep(1200)
         else:
-            sleep(1200)
+            print(day_name)
+            sleep(84600)
