@@ -1,6 +1,6 @@
 import requests
 
-LIST_CABINET = ['PROБЕГ', 'NISSAN', 'Peugeot/Ford', 'Chevrolet', 'Lada', 'МБ']
+# LIST_CABINET = ['PROБЕГ', 'NISSAN', 'Peugeot/Ford', 'Chevrolet', 'Lada', 'МБ']
 URL = 'https://apiauto.ru/1.0/dealer/account'
 
 

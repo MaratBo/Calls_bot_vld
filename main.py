@@ -1,13 +1,10 @@
 import datetime
-import calendar
-from datetime import timedelta
-from time import sleep
-
-from dotenv import load_dotenv
 import os
 import requests
+from datetime import timedelta
+from time import sleep
+from dotenv import load_dotenv
 from balance import check_balance
-
 
 
 load_dotenv()
@@ -88,6 +85,7 @@ def message(sms):
             }
     requests.post(URL, data=data)
 
+
 def user():
     time = datetime.date.today().strftime('%d.%m')
     for key in range(len(access)):
@@ -95,7 +93,7 @@ def user():
     # отправляем собранный текст по звонкам
     message(f'Звонки за {time} (всего/пропущ.)\n'
             f'{calls_text}')
-    # тут запуск бота по балансу
+    # запуск бота по балансу
     value = ''
     if len(rest_money) > 0:
         for i in rest_money:
@@ -107,19 +105,13 @@ def user():
 
 if __name__ == '__main__':
     while True:
-        date = datetime.date.today()
-        day_name = calendar.day_name[date.weekday()]
-        if day_name != 'Saturday' and day_name != 'Sunday':
-            time_now = datetime.datetime.now() + timedelta(hours=3) # смещение на американском сервере + 3ч
-            h = time_now.hour
-            m = time_now.minute
-            print(f'check time {h}:{m}')
-            if m in range(10, 30) and h == 18:
-                print(f'start script {h}:{m}')
-                user()
-                sleep(84600)
-            else:
-                sleep(1200)
-        else:
-            print(day_name)
+        time_now = datetime.datetime.now() + timedelta(hours=3)  # смещение на сервере +3ч
+        h = time_now.hour
+        m = time_now.minute
+        if m in range(10, 30) and h == 18:
+            print(f'start script {h}:{m}')
+            user()
             sleep(84600)
+        else:
+            print(f'check time {h}:{m}')
+            sleep(1200)
