@@ -135,7 +135,7 @@ if __name__ == '__main__':
         h = time_now.hour
         m = time_now.minute
         print(f'check time {h}:{m}')
-        if m in range(0, 59) and h == 19:
+        if m in range(0, 30) and h == 18:
             print(f'start script {h}:{m}')
             user(access)
             which_cabinet.clear()
