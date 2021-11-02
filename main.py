@@ -95,7 +95,8 @@ def message(sms, CHAT_ID):
     data = {'chat_id': CHAT_ID,
             'text': sms
             }
-    requests.post(URL, data=data)
+    #requests.post(URL, data=data)
+    print(sms)
 
 
 def user(access):
@@ -126,6 +127,7 @@ def user(access):
             message(text, CHAT_ID_AVANGARD)
 
 
+
 if __name__ == '__main__':
     while True:
         access = [cabinet_1, cabinet_2, cabinet_3, cabinet_4, cabinet_5, 'avtotrakt']
@@ -133,7 +135,7 @@ if __name__ == '__main__':
         h = time_now.hour
         m = time_now.minute
         print(f'check time {h}:{m}')
-        if m in range(0, 30) and h == 18:
+        if m in range(0, 59) and h == 19:
             print(f'start script {h}:{m}')
             user(access)
             which_cabinet.clear()
