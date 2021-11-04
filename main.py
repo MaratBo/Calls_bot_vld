@@ -95,14 +95,14 @@ def message(sms, CHAT_ID):
     data = {'chat_id': CHAT_ID,
             'text': sms
             }
-    #requests.post(URL, data=data)
+    requests.post(URL, data=data)
     print(sms)
 
 
 def user(access):
     which_cabinet.append(access)
-    CHAT_ID = '@calls_stat'
-    CHAT_ID_AVANGARD = '@avangard_calls'
+    CHAT_ID = '@calls_from_office'#@calls_stat'
+    CHAT_ID_AVANGARD = '@calls_from_office'#@avangard_calls'
     time = datetime.date.today().strftime('%d.%m')
     for key in range(len(access)-1):
         auth(access[key], key)
@@ -135,7 +135,7 @@ if __name__ == '__main__':
         h = time_now.hour
         m = time_now.minute
         print(f'check time {h}:{m}')
-        if m in range(0, 30) and h == 18:
+        if m in range(0, 33) and h == 21:
             print(f'start script {h}:{m}')
             user(access)
             which_cabinet.clear()
