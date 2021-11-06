@@ -101,8 +101,8 @@ def message(sms, CHAT_ID):
     data = {'chat_id': CHAT_ID,
             'text': sms
             }
-    #requests.post(URL, data=data)
-    print(sms)
+    requests.post(URL, data=data)
+    #print(sms)
 
 def user(access):
     which_cabinet.append(access)
