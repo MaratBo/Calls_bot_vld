@@ -6,12 +6,14 @@ from time import sleep
 from dotenv import load_dotenv
 from balance import check_balance
 from avangard_spb import access2, make_message
+from petrovsky_spb import access3, make_message3
 
 
 load_dotenv()
 rest_money = []
 calls_text = ''
 calls_text_2 = ''
+calls_text_3 = ''
 cabinet_1 = os.getenv("ACCESS_1")
 cabinet_2 = os.getenv("ACCESS_2")
 cabinet_3 = os.getenv("ACCESS_3")
@@ -46,7 +48,7 @@ def script(session_id, key):  # возвращает список приняты
     name_group = which_cabinet[0][-1]
     name = which_cabinet[0][key].split("'")[-2]
     start_time = f'{datetime.date.today()}T00:00:00.000Z'
-    global calls_text, calls_text_2
+    global calls_text, calls_text_2, calls_text_3
     headers = {
         'X-Session-Id': session_id,
         'X-Authorization': TOKEN,
@@ -76,12 +78,16 @@ def script(session_id, key):  # возвращает список приняты
         except:
             send_data.append(0)
     if send_data[0] != 0:
-        if name_group != 'avangard':
+        if name_group == 'avtotrakt':
             make_message_one(name, send_data)
             send_data.clear()
-        else:
+        if name_group == 'avangard':
             text = make_message(name, send_data)
             calls_text_2 += f'{text}\n'
+            send_data.clear()
+        else:
+            text = make_message3(name, send_data)
+            calls_text_3 += f'{text}\n'
             send_data.clear()
     balance_info = check_balance(headers, name)  # возвращает готовый текст по балансу
     if balance_info is not None:
@@ -96,23 +102,27 @@ def message(sms, CHAT_ID):
             'text': sms
             }
     requests.post(URL, data=data)
-    print(sms)
 
 
 def user(access):
     which_cabinet.append(access)
-    CHAT_ID = '@calls_from_office'#@calls_stat'
-    CHAT_ID_AVANGARD = '@calls_from_office'#@avangard_calls'
+    CHAT_ID = '@calls_from_office'  # @calls_stat'
+    CHAT_ID_AVANGARD = '@calls_from_office'  # @avangard_calls'
+    CHAT_ID_PETROVSKY = '@petrovsky_calls'
     time = datetime.date.today().strftime('%d.%m')
-    for key in range(len(access)-1):
+    for key in range(len(access) - 1):
         auth(access[key], key)
     # отправляем собранный текст по звонкам
     if access[-1] == 'avtotrakt':
         message(f'Звонки за {time} (всего/пропущ.)\n'
                 f'{calls_text}', CHAT_ID)
-    else:
+    if access[-1] == 'avangard':
         message(f'Звонки за {time} (всего/пропущ.)\n'
                 f'{calls_text_2}', CHAT_ID_AVANGARD)
+    else:
+        message(f'Звонки за {time} (всего/пропущ.)\n'
+                f'{calls_text_3}', CHAT_ID_PETROVSKY)
+
     # запуск бота по балансу
     value = ''
     if len(rest_money) > 0:
@@ -125,7 +135,11 @@ def user(access):
             rest_money.clear()
         if access[-1] == 'avangard':
             message(text, CHAT_ID_AVANGARD)
-
+            rest_money.clear()
+        if access[-1] == 'petrovsky':
+            message(text, CHAT_ID_PETROVSKY)
+            rest_money.clear()
+    which_cabinet.clear()
 
 
 if __name__ == '__main__':
@@ -134,12 +148,15 @@ if __name__ == '__main__':
         time_now = datetime.datetime.now() + timedelta(hours=3)  # смещение на американском сервере + 3ч
         h = time_now.hour
         m = time_now.minute
+        d = time_now.date().strftime("%d")
         print(f'check time {h}:{m}')
-        if m in range(0, 33) and h == 21:
-            print(f'start script {h}:{m}')
+        if m in range(0, 30) and h == 18:
+            print(f'start script {d}-{h}:{m}')
             user(access)
             which_cabinet.clear()
             user(access2)
+            which_cabinet.clear()
+            user(access3)
             sleep(84600)
         else:
             sleep(1200)
