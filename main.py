@@ -109,7 +109,7 @@ def user(access):
     which_cabinet.append(access)
     CHAT_ID = '@calls_from_office'  # @calls_stat'
     CHAT_ID_AVANGARD = '@calls_from_office'  # @avangard_calls'
-    CHAT_ID_PETROVSKY = '@petrovsky_calls'
+    CHAT_ID_PETROVSKY = '@calls_from_office'#'@petrovsky_calls'
     time = datetime.date.today().strftime('%d.%m')
     for key in range(len(access) - 1):
         auth(access[key], key)
