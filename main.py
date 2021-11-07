@@ -102,6 +102,7 @@ def message(sms, CHAT_ID):
             'text': sms
             }
     requests.post(URL, data=data)
+    print(sms)
 
 
 def user(access):
@@ -150,7 +151,7 @@ if __name__ == '__main__':
         m = time_now.minute
         d = time_now.date().strftime("%d")
         print(f'check time {h}:{m}')
-        if m in range(0, 30) and h == 18:
+        if m in range(0, 59) and h == 22:
             print(f'start script {d}-{h}:{m}')
             user(access)
             which_cabinet.clear()
