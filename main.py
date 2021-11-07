@@ -5,8 +5,8 @@ from datetime import timedelta
 from time import sleep
 from dotenv import load_dotenv
 from balance import check_balance
-from avangard_spb import access2, make_message
-from petrovsky_spb import access3, make_message3
+from avangard_spb import access2, make_message, make_message3, access3
+#from petrovsky_spb import access3, make_message3
 
 
 load_dotenv()
@@ -152,7 +152,7 @@ if __name__ == '__main__':
         m = time_now.minute
         d = time_now.date().strftime("%d")
         print(f'check time {h}:{m}')
-        if m in range(0, 59) and h == 20:
+        if m in range(0, 59) and h == 23:
             print(f'start script {d}-{h}:{m}')
             user(access)
             which_cabinet.clear()
