@@ -87,9 +87,7 @@ def script(session_id, key):  # возвращает список приняты
             send_data.clear()
         elif name_group == 'petrovsky':
             text = make_message3(name, send_data)
-            print(f'возврат текста {text}')
             calls_text_3 += f'{text}\n'
-            print(f'запись текста {calls_text_3}')
             send_data.clear()
     balance_info = check_balance(headers, name)  # возвращает готовый текст по балансу
     if balance_info is not None:
@@ -123,7 +121,6 @@ def user(access):
         message(f'Звонки за {time} (всего/пропущ.)\n'
                 f'{calls_text_2}', CHAT_ID_AVANGARD)
     if access[-1] == 'petrovsky':
-        print(calls_text_3)
         message(f'Звонки за {time} (всего/пропущ.)\n'
                 f'{calls_text_3}', CHAT_ID_PETROVSKY)
 
