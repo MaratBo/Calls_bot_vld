@@ -121,6 +121,7 @@ def user(access):
         message(f'Звонки за {time} (всего/пропущ.)\n'
                 f'{calls_text_2}', CHAT_ID_AVANGARD)
     if access[-1] == 'petrovsky':
+        print(calls_text_3)
         message(f'Звонки за {time} (всего/пропущ.)\n'
                 f'{calls_text_3}', CHAT_ID_PETROVSKY)
 
@@ -151,7 +152,7 @@ if __name__ == '__main__':
         m = time_now.minute
         d = time_now.date().strftime("%d")
         print(f'check time {h}:{m}')
-        if m in range(0, 59) and h == 19:
+        if m in range(0, 59) and h == 20:
             print(f'start script {d}-{h}:{m}')
             user(access)
             which_cabinet.clear()
