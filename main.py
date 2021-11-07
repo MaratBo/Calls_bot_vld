@@ -5,8 +5,8 @@ from datetime import timedelta
 from time import sleep
 from dotenv import load_dotenv
 from balance import check_balance
-from avangard_spb import access2, make_message, make_message3, access3
-#from petrovsky_spb import access3, make_message3
+from avangard_spb import access2, make_message
+from petrovsky_spb import access3, make_message3
 
 
 load_dotenv()
@@ -81,13 +81,15 @@ def script(session_id, key):  # возвращает список приняты
         if name_group == 'avtotrakt':
             make_message_one(name, send_data)
             send_data.clear()
-        if name_group == 'avangard':
+        elif name_group == 'avangard':
             text = make_message(name, send_data)
             calls_text_2 += f'{text}\n'
             send_data.clear()
-        else:
+        elif name_group == 'petrovsky':
             text = make_message3(name, send_data)
+            print(f'возврат текста {text}')
             calls_text_3 += f'{text}\n'
+            print(f'запись текста {calls_text_3}')
             send_data.clear()
     balance_info = check_balance(headers, name)  # возвращает готовый текст по балансу
     if balance_info is not None:
@@ -152,7 +154,7 @@ if __name__ == '__main__':
         m = time_now.minute
         d = time_now.date().strftime("%d")
         print(f'check time {h}:{m}')
-        if m in range(0, 59) and h == 20:
+        if m in range(0, 59) and h == 23:
             print(f'start script {d}-{h}:{m}')
             user(access)
             which_cabinet.clear()
