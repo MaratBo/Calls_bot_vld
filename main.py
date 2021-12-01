@@ -1,34 +1,23 @@
 import datetime
-import os
-import requests
+import calendar
 from datetime import timedelta
 from time import sleep
+from customers import access, access2, access3, access4, make_message
 from dotenv import load_dotenv
-from balance import check_balance
-from avangard_spb import access2, make_message
-from petrovsky_spb import access3, make_message3
+import os
+import requests
 
+from balance import check_balance
 
 load_dotenv()
 rest_money = []
+which_cabinet = []
+test_list_trakt = []
+test_list_av = []
+test_list_petr = []
 calls_text = ''
-calls_text_2 = ''
-calls_text_3 = ''
-cabinet_1 = os.getenv("ACCESS_1")
-cabinet_2 = os.getenv("ACCESS_2")
-cabinet_3 = os.getenv("ACCESS_3")
-cabinet_4 = os.getenv("ACCESS_4")
-cabinet_5 = os.getenv("ACCESS_5")
-cabinet_6 = os.getenv("ACCESS_6")
 TOKEN = os.getenv("VERTIS_TOKEN")
 TLG_TOKEN = os.getenv("MARUSIA_TOKEN")
-which_cabinet = []
-
-
-def make_message_one(name, send_data):
-    global calls_text
-    text = f'{name} - {send_data[0]}/{send_data[1]}'
-    calls_text += f'{text}\n'
 
 
 def auth(data, key):
@@ -48,7 +37,6 @@ def script(session_id, key):  # возвращает список приняты
     name_group = which_cabinet[0][-1]
     name = which_cabinet[0][key].split("'")[-2]
     start_time = f'{datetime.date.today()}T00:00:00.000Z'
-    global calls_text, calls_text_2, calls_text_3
     headers = {
         'X-Session-Id': session_id,
         'X-Authorization': TOKEN,
@@ -77,27 +65,19 @@ def script(session_id, key):  # возвращает список приняты
             send_data.append(len(unic_calls))
         except:
             send_data.append(0)
+    global calls_text
     if send_data[0] != 0:
-        if name_group == 'avtotrakt':
-            make_message_one(name, send_data)
-            send_data.clear()
-        elif name_group == 'avangard':
-            text = make_message(name, send_data)
-            calls_text_2 += f'{text}\n'
-            send_data.clear()
-        elif name_group == 'petrovsky':
-            text = make_message3(name, send_data)
-            calls_text_3 += f'{text}\n'
-            send_data.clear()
+        text = make_message(name_group, name, send_data)
+        calls_text = '\n'.join(text)
+        send_data.clear()
     balance_info = check_balance(headers, name)  # возвращает готовый текст по балансу
     if balance_info is not None:
         rest_money.append(balance_info)
 
 
 def message(sms, CHAT_ID):
-    TOKEN_BOT = TLG_TOKEN  # токен Маруси
     URL = (
-        'https://api.telegram.org/bot{token}/sendMessage'.format(token=TOKEN_BOT))
+        'https://api.telegram.org/bot{token}/sendMessage'.format(token=TLG_TOKEN))
     data = {'chat_id': CHAT_ID,
             'text': sms
             }
@@ -106,24 +86,22 @@ def message(sms, CHAT_ID):
 
 def user(access):
     which_cabinet.append(access)
-    CHAT_ID = '@calls_from_office'  # @calls_stat'
-    CHAT_ID_AVANGARD = '@calls_from_office'  # @avangard_calls'
-    CHAT_ID_PETROVSKY = '@petrovsky_calls'
     time = datetime.date.today().strftime('%d.%m')
-    for key in range(len(access) - 1):
+    for key in range(len(access)-1):
         auth(access[key], key)
     # отправляем собранный текст по звонкам
     if access[-1] == 'avtotrakt':
-        message(f'Звонки за {time} (всего/пропущ.)\n'
-                f'{calls_text}', CHAT_ID)
-    if access[-1] == 'avangard':
-        message(f'Звонки за {time} (всего/пропущ.)\n'
-                f'{calls_text_2}', CHAT_ID_AVANGARD)
-    if access[-1] == 'petrovsky':
-        message(f'Звонки за {time} (всего/пропущ.)\n'
-                f'{calls_text_3}', CHAT_ID_PETROVSKY)
+        CHAT_ID = "@calls_stat"
+    elif access[-1] == 'avangard':
+        CHAT_ID = '@avangard_calls'
+    elif access[-1] == 'm2o':
+        CHAT_ID = '@m2o_autoru'
+    else:
+        CHAT_ID = "@petrovsky_calls"
+    message(f'Звонки за {time} (всего/пропущ.)\n'
+            f'{calls_text}', CHAT_ID)
 
-    # запуск бота по балансу
+    # тут запуск бота по балансу
     value = ''
     if len(rest_money) > 0:
         for i in rest_money:
@@ -131,32 +109,41 @@ def user(access):
                 value += f'{i}\n'
         text = f'Балансы кабинетов:\n{value}'
         if access[-1] == 'avtotrakt':
+            CHAT_ID = '@calls_stat'
             message(text, CHAT_ID)
             rest_money.clear()
-        if access[-1] == 'avangard':
-            message(text, CHAT_ID_AVANGARD)
+        elif access[-1] == 'avangard':
+            CHAT_ID = '@avangard_calls'
+            message(text, CHAT_ID)
             rest_money.clear()
-        if access[-1] == 'petrovsky':
-            message(text, CHAT_ID_PETROVSKY)
+        elif access[-1] == 'petrovsky':
+            CHAT_ID = '@petrovsky_calls'
+            message(text, CHAT_ID)
+            rest_money.clear()
+        elif access[-1] == 'm2o':
+            CHAT_ID = '@m2o_autoru'
+            message(text, CHAT_ID)
             rest_money.clear()
     which_cabinet.clear()
 
 
 if __name__ == '__main__':
     while True:
-        access = [cabinet_1, cabinet_2, cabinet_3, cabinet_4, cabinet_5, 'avtotrakt']
         time_now = datetime.datetime.now() + timedelta(hours=3)  # смещение на американском сервере + 3ч
         h = time_now.hour
         m = time_now.minute
         d = time_now.date().strftime("%d")
         print(f'check time {h}:{m}')
-        if m in range(0, 30) and h == 18:
+        if m in range(0, 41) and h == 21:
             print(f'start script {d}-{h}:{m}')
             user(access)
             which_cabinet.clear()
             user(access2)
             which_cabinet.clear()
             user(access3)
+            which_cabinet.clear()
+            user(access4)
+            which_cabinet.clear()
             sleep(84600)
         else:
             sleep(1200)
