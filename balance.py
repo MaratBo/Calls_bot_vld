@@ -9,7 +9,7 @@ def check_balance(headers, name):
     r = requests.get(URL, headers=headers).json()
     try:
         days_to_empty = r['rest_days']
-        if days_to_empty in [1, 5, 7, 8]:
+        if days_to_empty in [1, 5, 7]:
             text = f'{name}\nденьги закончатся через {days_to_empty} дн.'
             return text
     except:
