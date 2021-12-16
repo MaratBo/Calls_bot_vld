@@ -83,7 +83,6 @@ def message(sms, CHAT_ID):
             }
     requests.post(URL, data=data)
 
-
 def user(access):
     which_cabinet.append(access)
     time = datetime.date.today().strftime('%d.%m')
@@ -110,6 +109,7 @@ def user(access):
         text = f'Балансы кабинетов:\n{value}'
         if access[-1] == 'avtotrakt':
             CHAT_ID = '@calls_stat'
+            text = f'{text} @Danil_Bashkin'
             message(text, CHAT_ID)
             rest_money.clear()
         elif access[-1] == 'avangard':
