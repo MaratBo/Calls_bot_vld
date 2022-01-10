@@ -1,8 +1,7 @@
 import datetime
-import calendar
 from datetime import timedelta
 from time import sleep
-from customers import access, access2, access3, access4, make_message
+from customers import access, access2, access3, access4, access5, make_message
 from dotenv import load_dotenv
 import os
 import requests
@@ -12,12 +11,10 @@ from balance import check_balance
 load_dotenv()
 rest_money = []
 which_cabinet = []
-test_list_trakt = []
-test_list_av = []
-test_list_petr = []
 calls_text = ''
 TOKEN = os.getenv("VERTIS_TOKEN")
 TLG_TOKEN = os.getenv("MARUSIA_TOKEN")
+flag = []
 
 
 def auth(data, key):
@@ -50,11 +47,12 @@ def script(session_id, key):  # возвращает список приняты
         "filter": {
             "period":
                 {
-                    "from": start_time
+                    "from": start_time,
                 }
         },
     }
     ADD_DATA = [{"results": "ALL_RESULT_GROUP"}, {'results': 'MISSED_GROUP'}]
+    global send_data
     send_data = []
     for i in ADD_DATA:
         data['filter'].update(i)
@@ -69,19 +67,25 @@ def script(session_id, key):  # возвращает список приняты
     if send_data[0] != 0:
         text = make_message(name_group, name, send_data)
         calls_text = '\n'.join(text)
-        send_data.clear()
+        flag.append(True)
+    else:
+        flag.append(None)
+
     balance_info = check_balance(headers, name)  # возвращает готовый текст по балансу
     if balance_info is not None:
         rest_money.append(balance_info)
 
 
 def message(sms, CHAT_ID):
+
     URL = (
         'https://api.telegram.org/bot{token}/sendMessage'.format(token=TLG_TOKEN))
     data = {'chat_id': CHAT_ID,
             'text': sms
             }
     requests.post(URL, data=data)
+    flag.clear()
+
 
 def user(access):
     which_cabinet.append(access)
@@ -89,16 +93,21 @@ def user(access):
     for key in range(len(access)-1):
         auth(access[key], key)
     # отправляем собранный текст по звонкам
-    if access[-1] == 'avtotrakt':
-        CHAT_ID = "@calls_stat"
-    elif access[-1] == 'avangard':
-        CHAT_ID = '@avangard_calls'
-    elif access[-1] == 'm2o':
-        CHAT_ID = '@m2o_autoru'
+    if True in flag:
+        if access[-1] == 'avtotrakt':
+            CHAT_ID = "@calls_stat"
+        elif access[-1] == 'avangard':
+            CHAT_ID = '@avangard_calls'
+        elif access[-1] == 'm2o':
+            CHAT_ID = '@m2o_autoru'
+        elif access[-1] == 'petrovsky':
+            CHAT_ID = '@petrovsky_calls'
+        else:
+            CHAT_ID = '@axis_bets'
+        message(f'Звонки за {time} (всего/пропущ.)\n'
+                f'{calls_text}', CHAT_ID)
     else:
-        CHAT_ID = "@petrovsky_calls"
-    message(f'Звонки за {time} (всего/пропущ.)\n'
-            f'{calls_text}', CHAT_ID)
+        print(f'{access[-1]} - not calls')
 
     # тут запуск бота по балансу
     value = ''
@@ -124,6 +133,10 @@ def user(access):
             CHAT_ID = '@m2o_autoru'
             message(text, CHAT_ID)
             rest_money.clear()
+        elif access[-1] == 'axis':
+            CHAT_ID = '@axis_bets'
+            message(text, CHAT_ID)
+            rest_money.clear()
     which_cabinet.clear()
 
 
@@ -143,6 +156,8 @@ if __name__ == '__main__':
             user(access3)
             which_cabinet.clear()
             user(access4)
+            which_cabinet.clear()
+            user(access5)
             which_cabinet.clear()
             sleep(84600)
         else:
