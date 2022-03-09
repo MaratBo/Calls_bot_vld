@@ -86,7 +86,6 @@ def script(session_id: str, key: int):  # возвращает список пр
         flag.append(None)
 
     if dealer_name[0] in ['geely_planeta', 'planeta_used', 'chery_planeta', 'skoda_planeta']:
-        print(f'dealer name 2{dealer_name[0]}')
         global custom_message
         custom_message = artem_eremin(headers)
     else: pass
@@ -147,7 +146,6 @@ def user(access):
 
     values = ''
     if len(my_ex) > 0:
-        print(my_ex)
         for i in my_ex:
             if i is not None:
                 values += f'{i}\n'
@@ -165,7 +163,7 @@ if __name__ == '__main__':
         m = time_now.minute
         d = time_now.date().strftime("%d")
         print(f'check time {h}:{m}')
-        if m in range(0, 30) and h == 21:
+        if m in range(0, 30) and h == 18:
             print(f'start script {d}-{h}:{m}')
             for i in accesses:
                 user(i)
