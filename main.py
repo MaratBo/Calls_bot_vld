@@ -8,6 +8,8 @@ import requests
 
 from balance import check_balance
 from sale_back import sale_back
+from custom_fit import artem_eremin
+
 
 load_dotenv()
 rest_money = []
@@ -18,9 +20,11 @@ TOKEN = os.getenv("VERTIS_TOKEN")
 TLG_TOKEN = os.getenv("MARUSIA_TOKEN")
 flag = []
 dealer_name = []
+target_calls = ''
+custom_message = ''
 
 
-def auth(data, key):
+def auth(data: dict, key: int):
     URL = "https://apiauto.ru/1.0/auth/login"
     headers = {'Accept': 'application/json',
                'Content-Type': 'application/json',
@@ -34,7 +38,7 @@ def auth(data, key):
         pass
 
 
-def script(session_id, key):  # возвращает список принятых и пропущ звонков
+def script(session_id: str, key: int):  # возвращает список принятых и пропущ звонков
     name_group = which_cabinet[0][-1]
     name = which_cabinet[0][key].split("'")[-2]
     start_time = f'{datetime.date.today()}T00:00:00.000Z'
@@ -55,7 +59,13 @@ def script(session_id, key):  # возвращает список приняты
                 }
         },
     }
-    ADD_DATA = [{"results": "ALL_RESULT_GROUP"}, {'results': 'MISSED_GROUP'}]
+    global target_calls
+    if dealer_name[0] in ['avangard', 'petrovsky', 'm2o', 'axis']:
+        target_calls = 'уникальные/целевые'
+        ADD_DATA = [{"targets": "ALL_TARGET_GROUP"}, {"targets": "TARGET_GROUP"}]
+    else:
+        target_calls = 'уникальные/пропущенные'
+        ADD_DATA = [{"results": "ALL_RESULT_GROUP"}, {'results': 'MISSED_GROUP'}]
     global send_data
     send_data = []
     for i in ADD_DATA:
@@ -74,6 +84,12 @@ def script(session_id, key):  # возвращает список приняты
         flag.append(True)
     else:
         flag.append(None)
+
+    if dealer_name[0] in ['geely_planeta', 'planeta_used', 'chery_planeta', 'skoda_planeta']:
+        print(f'dealer name 2{dealer_name[0]}')
+        global custom_message
+        custom_message = artem_eremin(headers)
+    else: pass
 
     balance_info = check_balance(headers, name)  # возвращает готовый текст по балансу
     if balance_info is not None:
@@ -97,19 +113,22 @@ def message(sms, CHAT_ID):
 def user(access):
     which_cabinet.append(access)
     time = datetime.date.today().strftime('%d.%m')
+    dealer_name.append(access[-1])
     for key in range(len(access) - 2):
         auth(access[key], key)
     # отправляем собранный текст по звонкам
     if True in flag:
-        dealer_name.append(access[-1])
         CHAT_ID = access[-2]
-        message(f'Звонки за {time} (всего/пропущ.)\n'
+        message(f'Звонки за {time} {target_calls}\n'
                 f'{calls_text}', CHAT_ID)
-        dealer_name.clear()
+        if custom_message:
+            message(custom_message, CHAT_ID)
+        else: pass
     else:
         print(f'{access[-1]} - not calls')
+    dealer_name.clear()
 
-    # тут запуск бота по балансу
+    ''' тут запуск бота по балансу'''
     value = ''
     if len(rest_money) > 0:
         for i in rest_money:
@@ -146,7 +165,7 @@ if __name__ == '__main__':
         m = time_now.minute
         d = time_now.date().strftime("%d")
         print(f'check time {h}:{m}')
-        if m in range(0, 30) and h == 18:
+        if m in range(0, 30) and h == 21:
             print(f'start script {d}-{h}:{m}')
             for i in accesses:
                 user(i)
