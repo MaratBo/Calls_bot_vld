@@ -4,7 +4,7 @@ import requests
 URL = 'https://apiauto.ru/1.0/dealer/account'
 
 
-def check_balance(headers, name):
+def check_balance(headers, name) -> str:
     """первый пуш менее 7 дней, второй 5 дней, третий если один день"""
     r = requests.get(URL, headers=headers).json()
     try:

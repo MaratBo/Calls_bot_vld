@@ -45,6 +45,7 @@ cabinet_31 = os.getenv('ACCESS_31')
 #гурина саша
 cabinet_28 = os.getenv('ACCESS_28')
 cabinet_29 = os.getenv('ACCESS_29')
+cabinet_32 = os.getenv('ACCESS_32')
 
 
 access = [cabinet_1, cabinet_2, cabinet_3, cabinet_4, cabinet_5, "@calls_stat", 'avtotrakt']
@@ -62,12 +63,11 @@ access12 = [cabinet_27, '@planetaugprobeg', 'planeta_used']
 access13 = [cabinet_28, '@autopartnertmn', 'partner_auto']
 access14 = [cabinet_29, '@agradtmn', 'avtograd']
 access15 = [cabinet_31, '@cherypau', 'chery_planeta']
+access16 = [cabinet_32, '@forwardsurgut', 'forward']
 
 accesses = [access, access2, access3, access4, access5, access6, access7, access8, access9, access10, access11,
-            access12, access13, access14, access15]
+            access12, access13, access14, access15, access16]
 
-#accesses = [access10, access11, access12, access15]
-#accesses = [access11]
 
 test_list_trakt = []
 test_list_av = []
@@ -84,9 +84,11 @@ test_list_used_planeta = []
 test_list_partner_auto = []
 test_list_avtograd = []
 test_list_chery_planeta = []
+test_list_forward = []
+signal_for_clean = []
 
 
-def make_message(name_group, name, send_data):
+def make_message(name_group, name, send_data) -> list:
     text = f'{name} - {send_data[0]}/{send_data[1]}'
     if name_group == 'avangard':
         test_list_av.append(text)
@@ -133,3 +135,6 @@ def make_message(name_group, name, send_data):
     elif name_group == 'chery_planeta':
         test_list_chery_planeta.append(text)
         return test_list_chery_planeta
+    elif name_group == 'forward':
+        test_list_forward.append(text)
+        return test_list_forward

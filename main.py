@@ -38,7 +38,8 @@ def auth(data: dict, key: int):
         pass
 
 
-def script(session_id: str, key: int):  # возвращает список принятых и пропущ звонков
+def script(session_id: str, key: int) -> None:
+    """making answered and refused calls"""
     name_group = which_cabinet[0][-1]
     name = which_cabinet[0][key].split("'")[-2]
     start_time = f'{datetime.date.today()}T00:00:00.000Z'
@@ -106,6 +107,7 @@ def message(sms, CHAT_ID):
             'text': sms
             }
     requests.post(URL, data=data)
+    print(sms)
     flag.clear()
 
 
@@ -163,7 +165,7 @@ if __name__ == '__main__':
         m = time_now.minute
         d = time_now.date().strftime("%d")
         print(f'check time {h}:{m}')
-        if m in range(0, 30) and h == 18:
+        if m in range(0, 59) and h == 18:
             print(f'start script {d}-{h}:{m}')
             for i in accesses:
                 user(i)
